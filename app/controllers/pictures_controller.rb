@@ -1,50 +1,30 @@
 class PicturesController < ApplicationController
 
 	def index
-		@pictures = [
-			{
-				:title 	=> "The old church on the coast of White Sea",
-				:artist => "Sergey Ershov",
-				:url 	=> "http://bitmakerlabs.s3.amazonaws.com/photogur/house.jpg"
-			},
-			{
-				:title	=> "Sea Power",
-				:artist	=> "Stephen Scullion",
-				:url	=> "http://bitmakerlabs.s3.amazonaws.com/photogur/wave.jpg"
-			},
-			{
-				:title	=> "Intro to Poppies",
-				:artist	=> "John Wilhem",
-				:url	=> "http://bitmakerlabs.s3.amazonaws.com/photogur/girl.jpg"
-			}
-		]
+		@pictures = Picture.all
 	end
 
 	def show
-		@pictures = [
-			{
-				:title 	=> "The old church on the coast of White Sea",
-				:artist => "Sergey Ershov",
-				:url 	=> "http://bitmakerlabs.s3.amazonaws.com/photogur/house.jpg"
-			},
-			{
-				:title	=> "Sea Power",
-				:artist	=> "Stephen Scullion",
-				:url	=> "http://bitmakerlabs.s3.amazonaws.com/photogur/wave.jpg"
-			},
-			{
-				:title	=> "Intro to Poppies",
-				:artist	=> "John Wilhem",
-				:url	=> "http://bitmakerlabs.s3.amazonaws.com/photogur/girl.jpg"
-			}
-		]
-		@picture = @pictures[params[:id].to_i]
+		@picture = Picture.find(params[:id])
 	end
 
 	def new
+		@picture = Picture.new
 	end
 
 	def create
-		render :text => "Saving a picture. URL: #{params[:url]}, Title: #{params[:title]}, Artist: #{params[:artist]}"
+		@picture = Picture.new(picture_params)
+		if @picture.save
+			redirect_to pictures_url
+		else
+			render :new
+		end
+		# render :text => "Saving a picture. URL: #{params[:url]}, Title: #{params[:title]}, Artist: #{params[:artist]}"
+	end
+
+	private
+	def picture_params
+		params.require(:picture).permit(:artist, :title, :url)
+		
 	end
 end
